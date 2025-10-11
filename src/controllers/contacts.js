@@ -8,9 +8,7 @@ import {
 } from '../services/contacts.js';
 
 export const getContactsController = async (req, res) => {
-  
   const userId = req.user._id;
-  
   
   const page = parseInt(req.query.page) || 1;
   const perPage = parseInt(req.query.perPage) || 10;
@@ -28,7 +26,7 @@ export const getContactsController = async (req, res) => {
     sortOrder,
     type,
     isFavourite,
-    userId, 
+    userId,
   });
   
   res.status(200).json({
@@ -57,7 +55,13 @@ export const getContactByIdController = async (req, res) => {
 
 export const createContactController = async (req, res) => {
   const userId = req.user._id;
-  const contact = await createContact(req.body, userId);
+  
+  const contactData = {
+    ...req.body,
+    photo: req.file ? req.file.path : null,
+  };
+  
+  const contact = await createContact(contactData, userId);
   
   res.status(201).json({
     status: 201,
@@ -70,7 +74,12 @@ export const updateContactController = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user._id;
   
-  const contact = await updateContact(contactId, req.body, userId);
+  const updateData = { ...req.body };
+  if (req.file) {
+    updateData.photo = req.file.path;
+  }
+  
+  const contact = await updateContact(contactId, updateData, userId);
   
   if (!contact) {
     throw createHttpError(404, 'Contact not found');

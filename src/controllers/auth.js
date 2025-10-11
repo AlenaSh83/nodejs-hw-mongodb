@@ -1,8 +1,11 @@
+import createHttpError from 'http-errors';
 import {
   registerUser,
   loginUser,
   refreshSession,
   logoutUser,
+  sendResetEmail,
+  resetPassword,
 } from '../services/auth.js';
 
 
@@ -21,12 +24,11 @@ export const loginController = async (req, res) => {
   const { email, password } = req.body;
   const { user, session } = await loginUser(email, password);
   
-  
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: 30 * 24 * 60 * 60 * 1000, 
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   
   res.status(200).json({
@@ -48,12 +50,11 @@ export const refreshController = async (req, res) => {
   
   const { user, session } = await refreshSession(refreshToken);
   
- 
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: 30 * 24 * 60 * 60 * 1000, 
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   
   res.status(200).json({
@@ -73,8 +74,30 @@ export const logoutController = async (req, res) => {
     await logoutUser(refreshToken);
   }
   
-
   res.clearCookie('refreshToken');
-  
   res.status(204).send();
+};
+
+
+export const sendResetEmailController = async (req, res) => {
+  const { email } = req.body;
+  await sendResetEmail(email);
+  
+  res.status(200).json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
+};
+
+
+export const resetPasswordController = async (req, res) => {
+  const { token, password } = req.body;
+  await resetPassword(token, password);
+  
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
+  });
 };
