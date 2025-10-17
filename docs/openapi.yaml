@@ -1,0 +1,145 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Contacts API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: API for managing contacts with authentication
+
+tags:
+  - name: Contacts
+    description: Operations with contacts
+  - name: Auth
+    description: Authentication operations
+
+servers:
+  - url: http://localhost:3000
+  - url: https://nodejs-hw-mongodb-c3r5.onrender.com
+
+paths:
+  /contacts:
+    get:
+      tags:
+        - Contacts
+      summary: Get all contacts
+      operationId: getContacts
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: perPage
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successfully found contacts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+    post:
+      tags:
+        - Contacts
+      summary: Create new contact
+      operationId: createContact
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - phoneNumber
+                - contactType
+              properties:
+                name:
+                  type: string
+                phoneNumber:
+                  type: string
+                contactType:
+                  type: string
+                  enum: [work, home, personal]
+      responses:
+        '201':
+          description: Successfully created contact
+          
+  /contacts/{id}:
+    get:
+      tags:
+        - Contacts
+      summary: Get contact by ID
+      operationId: getContactById
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Contact ID
+      responses:
+        '200':
+          description: Successfully found contact
+        '404':
+          description: Contact not found
+    patch:
+      tags:
+        - Contacts
+      summary: Update contact
+      operationId: updateContact
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully updated contact
+        '404':
+          description: Contact not found
+    delete:
+      tags:
+        - Contacts
+      summary: Delete contact
+      operationId: deleteContact
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Successfully deleted contact
+        '404':
+          description: Contact not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
