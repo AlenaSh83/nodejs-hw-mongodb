@@ -1,0 +1,136 @@
+tags:
+  - Contacts
+summary: Create new contact
+operationId: createContact
+description: Creates a new contact with optional photo upload
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+          - contactType
+        properties:
+          name:
+            type: string
+            minLength: 3
+            maxLength: 20
+            example: "John Doe"
+          phoneNumber:
+            type: string
+            minLength: 3
+            maxLength: 20
+            example: "+380501234567"
+          email:
+            type: string
+            format: email
+            minLength: 3
+            maxLength: 20
+            example: "john@example.com"
+          isFavourite:
+            type: boolean
+            default: false
+          contactType:
+            type: string
+            enum: [work, home, personal]
+            example: "personal"
+          photo:
+            type: string
+            format: binary
+            description: Contact photo (max 5MB, jpg/png/gif)
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+          - contactType
+        properties:
+          name:
+            type: string
+            minLength: 3
+            maxLength: 20
+          phoneNumber:
+            type: string
+            minLength: 3
+            maxLength: 20
+          email:
+            type: string
+            minLength: 3
+            maxLength: 20
+          isFavourite:
+            type: boolean
+          contactType:
+            type: string
+            enum: [work, home, personal]
+responses:
+  '201':
+    description: Successfully created contact
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: "Successfully created a contact!"
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                name:
+                  type: string
+                phoneNumber:
+                  type: string
+                email:
+                  type: string
+                isFavourite:
+                  type: boolean
+                contactType:
+                  type: string
+                photo:
+                  type: string
+                  nullable: true
+                userId:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+  '400':
+    description: Validation error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: "Name must be at least 3 characters long, Phone number is required"
+  '401':
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: "Authorization header missing"
