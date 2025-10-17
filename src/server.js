@@ -36,6 +36,14 @@ const setupServer = () => {
   const swaggerDocument = YAML.load(path.join(__dirname, '../docs/openapi.yaml'));
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+  app.get('/', (req, res) => {
+    res.json({
+      message: 'Welcome to Contacts API',
+      status: 'running',
+      documentation: '/api-docs'
+    });
+  });
+
   app.use('/auth', authRouter);
   app.use('/contacts', contactsRouter);
 
