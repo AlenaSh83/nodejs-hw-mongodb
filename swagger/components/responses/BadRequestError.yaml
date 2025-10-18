@@ -1,0 +1,35 @@
+description: Bad Request - invalid data or ID format
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Invalid ID format"
+        data:
+          type: object
+          description: Validation error details
+          properties:
+            message:
+              type: string
+              example: "Validation failed"
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  path:
+                    type: array
+                    items:
+                      type: string
+                  type:
+                    type: string

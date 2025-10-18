@@ -1,0 +1,62 @@
+tags:
+  - Auth
+summary: Refresh access token
+operationId: refreshSession
+description: Refreshes the access token using refresh token from cookies. Returns new access token and sets new refresh token cookie.
+security: []
+parameters:
+  - in: cookie
+    name: refreshToken
+    required: true
+    schema:
+      type: string
+    description: Refresh token from httpOnly cookie
+responses:
+  '200':
+    description: Successfully refreshed session
+    headers:
+      Set-Cookie:
+        schema:
+          type: string
+          example: "refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000"
+        description: New refresh token set as httpOnly cookie
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: "Successfully refreshed a session!"
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  description: New JWT access token for API requests
+  '401':
+    description: Refresh token not provided or invalid
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: "Refresh token not provided"

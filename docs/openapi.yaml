@@ -5,137 +5,51 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: API for managing contacts with authentication
+  description: API for managing contacts with authentication and user management
 
 tags:
   - name: Contacts
     description: Operations with contacts
   - name: Auth
-    description: Authentication operations
+    description: Authentication and authorization operations
 
 servers:
   - url: http://localhost:3000
+    description: Local development server
   - url: https://nodejs-hw-mongodb-c3r5.onrender.com
+    description: Production server
 
 paths:
   /contacts:
     get:
-      tags:
-        - Contacts
-      summary: Get all contacts
-      operationId: getContacts
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-            default: 1
-        - in: query
-          name: perPage
-          schema:
-            type: integer
-            default: 10
-      responses:
-        '200':
-          description: Successfully found contacts
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                  message:
-                    type: string
-                  data:
-                    type: object
+      $ref: '../swagger/paths/contacts/get.yaml'
     post:
-      tags:
-        - Contacts
-      summary: Create new contact
-      operationId: createContact
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - name
-                - phoneNumber
-                - contactType
-              properties:
-                name:
-                  type: string
-                phoneNumber:
-                  type: string
-                contactType:
-                  type: string
-                  enum: [work, home, personal]
-      responses:
-        '201':
-          description: Successfully created contact
-          
-  /contacts/{id}:
+      $ref: '../swagger/paths/contacts/post.yaml'
+  /contacts/{contactId}:
     get:
-      tags:
-        - Contacts
-      summary: Get contact by ID
-      operationId: getContactById
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: Contact ID
-      responses:
-        '200':
-          description: Successfully found contact
-        '404':
-          description: Contact not found
+      $ref: '../swagger/paths/contacts/{id}/get.yaml'
     patch:
-      tags:
-        - Contacts
-      summary: Update contact
-      operationId: updateContact
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully updated contact
-        '404':
-          description: Contact not found
+      $ref: '../swagger/paths/contacts/{id}/patch.yaml'
     delete:
-      tags:
-        - Contacts
-      summary: Delete contact
-      operationId: deleteContact
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Successfully deleted contact
-        '404':
-          description: Contact not found
+      $ref: '../swagger/paths/contacts/{id}/delete.yaml'
+  /auth/register:
+    post:
+      $ref: '../swagger/paths/auth/register.yaml'
+  /auth/login:
+    post:
+      $ref: '../swagger/paths/auth/login.yaml'
+  /auth/refresh:
+    post:
+      $ref: '../swagger/paths/auth/refresh.yaml'
+  /auth/logout:
+    post:
+      $ref: '../swagger/paths/auth/logout.yaml'
+  /auth/send-reset-email:
+    post:
+      $ref: '../swagger/paths/auth/send-reset-email.yaml'
+  /auth/reset-pwd:
+    post:
+      $ref: '../swagger/paths/auth/reset-pwd.yaml'
 
 components:
   securitySchemes:
@@ -143,3 +57,15 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  schemas:
+    Contact:
+      $ref: '../swagger/components/schemas/Contact.yaml'
+    User:
+      $ref: '../swagger/components/schemas/User.yaml'
+  responses:
+    BadRequestError:
+      $ref: '../swagger/components/responses/BadRequestError.yaml'
+    UnauthorizedError:
+      $ref: '../swagger/components/responses/UnauthorizedError.yaml'
+    NotFoundError:
+      $ref: '../swagger/components/responses/NotFoundError.yaml'
