@@ -7,12 +7,12 @@ security:
   - bearerAuth: []
 parameters:
   - in: path
-    name: id
+    name: contactId
     required: true
     schema:
       type: string
       example: "60d5eca77dd870b8c9890f7d"
-    description: The contact ID
+    description: Contact ID
 responses:
   '200':
     description: Successfully found contact
@@ -20,6 +20,10 @@ responses:
       application/json:
         schema:
           type: object
+          required:
+            - status
+            - message
+            - data
           properties:
             status:
               type: integer
@@ -28,76 +32,10 @@ responses:
               type: string
               example: "Successfully found contact with id 60d5eca77dd870b8c9890f7d!"
             data:
-              type: object
-              properties:
-                _id:
-                  type: string
-                  example: "60d5eca77dd870b8c9890f7d"
-                name:
-                  type: string
-                  example: "John Doe"
-                phoneNumber:
-                  type: string
-                  example: "+380501234567"
-                email:
-                  type: string
-                  example: "john@example.com"
-                isFavourite:
-                  type: boolean
-                  example: false
-                contactType:
-                  type: string
-                  enum: [work, home, personal]
-                  example: "personal"
-                photo:
-                  type: string
-                  nullable: true
-                  example: "https://res.cloudinary.com/..."
-                userId:
-                  type: string
-                  example: "60d5eca77dd870b8c9890f7c"
-                createdAt:
-                  type: string
-                  format: date-time
-                updatedAt:
-                  type: string
-                  format: date-time
+              $ref: '../../../components/schemas/Contact.yaml'
   '400':
-    description: Invalid ID format
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 400
-            message:
-              type: string
-              example: "Invalid ID format"
+    $ref: '../../../components/responses/BadRequestError.yaml'
   '401':
-    description: Unauthorized - missing or invalid token
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 401
-            message:
-              type: string
-              example: "Authorization header missing"
+    $ref: '../../../components/responses/UnauthorizedError.yaml'
   '404':
-    description: Contact not found
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 404
-            message:
-              type: string
-              example: "Contact not found"
+    $ref: '../../../components/responses/NotFoundError.yaml'

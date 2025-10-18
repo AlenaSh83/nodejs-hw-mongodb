@@ -1,0 +1,21 @@
+tags:
+  - Auth
+summary: Logout user
+operationId: logoutUser
+description: Logs out the user by invalidating the refresh token and clearing the cookie
+security: []
+parameters:
+  - in: cookie
+    name: refreshToken
+    schema:
+      type: string
+    description: Refresh token from httpOnly cookie (optional)
+responses:
+  '204':
+    description: Successfully logged out (no content)
+    headers:
+      Set-Cookie:
+        schema:
+          type: string
+          example: "refreshToken=; HttpOnly; Secure; SameSite=Strict; Max-Age=0"
+        description: Refresh token cookie is cleared
